@@ -1,9 +1,14 @@
-import { PostModel } from "@/models/post/post-model";
-import { PostRepository } from "./post-repository";
 import { drizzleDb } from "@/db/drizzle";
+import { SIMULATE_WAIT_IN_MS } from "@/lib/constants";
+import { PostModel } from "@/models/post/post-model";
+import { asyncDelay } from "@/utils/async-delay";
+import { logColor } from "@/utils/log-color";
+import { PostRepository } from "./post-repository";
 
 export class DrizzlePostRepository implements PostRepository {
   async findAllPublic(): Promise<PostModel[]> {
+    await asyncDelay(SIMULATE_WAIT_IN_MS, true);
+    logColor("findAllPublic", Date.now());
     const posts = await drizzleDb.query.posts.findMany({
       orderBy: (posts, { desc }) => desc(posts.createdAt),
       where: (posts, { eq }) => eq(posts.published, true),
